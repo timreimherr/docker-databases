@@ -1,0 +1,90 @@
+version: "3.6"
+# From https://github.com/mthomps4/docker-compose-db
+#  First, docker-compose up --no-start
+#  Then, docker-compose start mysql56
+
+# https://stackoverflow.com/questions/53249276/docker-compose-mysql-init-sql-is-not-executed
+# remeber to delete the /data folder
+# docker-compose down -v to reset env variables
+# docker-compose up --force-recreate mysql
+services:
+  mysql56:
+    image: mysql:5.6
+    container_name: MySQL56
+    # command: --port=3306 --default-authentication-plugin=mysql_native_password #--innodb-use-native-aio=0
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./.env
+    environment:
+    #  - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=password
+    #  - MYSQL_DATABASE=${DB_USER_NAME}
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    #  - DEBUG=${MYSQL56_DEBUG}
+    volumes:
+      - ./db/mysql56/init/01.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./db/mysql56/data:/var/lib/mysql:rw
+      # - /Users/timreimherr/mysql-1:/var/lib/mysql
+    #  - ./db/mysql56/my.conf:/etc/mysql/my.cnf
+  # MySQL 5.7
+  # mysql57:
+  #   image: mysql:5.7.32
+  #   container_name: MySQL57
+  #   command: --port=3306 --default-authentication-plugin=mysql_native_password #--innodb-use-native-aio=0
+  #   restart: always
+  #   ports:
+  #     - "3306:3306"
+  #   # env_file:
+  #   #   - ./.env
+  #   environment:
+  #     - MYSQL_ROOT_HOST=%
+  #     - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+  #   # - MYSQL_DATABASE=sezzle
+  #     - MYSQL_USER=${DB_USER_NAME}
+  #     - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+  #   #  - DEBUG=${MYSQL57_DEBUG}
+  #   volumes:
+  #     - ./db/mysql57/init:/docker-entrypoint-initdb.d
+  #     - ./db/mysql57/data:/var/lib/mysql
+  #     - ./db/mysql57/my.conf:/etc/mysql/my.conf
+  # # MySQL 8
+  # mysql8:
+  #   image: mysql:latest
+  #   container_name: MySQL8
+  #   command: --port=3306 #--innodb-use-native-aio=0
+  #   restart: always
+  #   ports:
+  #     - "3306:3306"
+  #   # env_file:
+  #   #   - ./.env
+  #   environment:
+  #     - MYSQL_ROOT_HOST=%
+  #     - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+  #   # - MYSQL_DATABASE=sezzle
+  #     - MYSQL_USER=${DB_USER_NAME}
+  #     - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+  #   #  - DEBUG=${MYSQL8_DEBUG}
+  #   volumes:
+  #     - ./db/mysql8/init:/docker-entrypoint-initdb.d
+  #     - ./db/mysql8/data:/var/lib/mysql
+  #     - ./db/mysql8/my.conf:/etc/mysql/my.conf
+  # # Postgres
+  # postgres:
+  #   image: postgres:latest
+  #   container_name: postgres
+  #   restart: always
+  #   # env_file:
+  #   #   - ./.env
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     - POSTGRES_PASSWORD=${DB_USER_PASSWORD}
+  #     - POSTGRES_USER=${DB_USER_NAME}
+  #     - PGDATA=/var/lib/postgresql/data/pgdata
+  #   volumes:
+  #     - ./db/postgres/init:/docker-entrypoint-initdb.d
+  #     - ./db/postgres/data:/var/lib/postgresql/data/pgdata
